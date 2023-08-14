@@ -1,4 +1,5 @@
 import * as React from 'react';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import { useIsFocused } from '@react-navigation/native';
 
 type InjectedProps = {
@@ -26,6 +27,8 @@ export default function withNavigationFocus<
   WrappedComponent.displayName = `withNavigationFocus(${
     Comp.displayName || Comp.name
   })`;
+
+  hoistNonReactStatics(WrappedComponent, Comp);
 
   return WrappedComponent;
 }

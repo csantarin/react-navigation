@@ -1,4 +1,5 @@
 import * as React from 'react';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import type { NavigationProp, ParamListBase } from '@react-navigation/native';
 import useCompatNavigation from './useCompatNavigation';
 import type { CompatNavigationProp } from './types';
@@ -29,6 +30,8 @@ export default function withNavigation<
   WrappedComponent.displayName = `withNavigation(${
     Comp.displayName || Comp.name
   })`;
+
+  hoistNonReactStatics(WrappedComponent, Comp);
 
   return WrappedComponent;
 }
