@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.3.21 (2023-08-14)
+
+### Bug Fixes
+
+* restore lost hoist-non-react-statics functionality to withNavigation HOCs ([csantarin/react-navigation#2](https://github.com/csantarin/react-navigation/pull/2))
+
+
+
 ## [5.3.20](https://github.com/react-navigation/react-navigation/compare/@react-navigation/compat@5.3.19...@react-navigation/compat@5.3.20) (2021-08-17)
 
 
