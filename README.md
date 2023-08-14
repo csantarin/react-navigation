@@ -42,7 +42,7 @@ Then follow these steps to publish and install a forked package:
 
 1. Fork this repo to your account and clone the forked repo to your local machine
 1. Open a Terminal and `cd` to the location of the cloned repo
-1. Run `yarn` to install any dependencies
+1. Run `yarn` to install any dependencies (c.f. **Installing dependencies of any package** below for additional context)
 1. If you want to make any changes, make them and commit
 1. Now `cd` to the package directory that you want to use (e.g. `cd packages/stack` for `@react-navigation/stack`)
 1. Run `gitpkg publish` to publish the package to your repo
@@ -60,6 +60,47 @@ yarn add <user>/<repo>.git#<name>
 ```
 
 Remember to replace `<user>`, `<repo>` and `<name>` with right values.
+
+### Installing dependencies of any package
+
+It has been observed that building or installing the packages can cause errors pointing towards missing modules in TypeScript.
+
+https://github.com/react-navigation/react-navigation/issues/8724
+
+```
+Error: Failed to build definition files.
+    at build (/home/bill/Projects/react-navigation/node_modules/@react-native-community/bob/lib/targets/typescript.js:112:11)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async Object.handler (/home/bill/Projects/react-navigation/node_modules/@react-native-community/bob/lib/cli.js:350:9)
+error Command failed with exit code 1.
+yarn run v1.18.0
+$ bob build
+ℹ Building target commonjs
+ℹ Cleaning up previous build at lib/commonjs
+ℹ Compiling 12 files in src with babel
+✓ Wrote files to lib/commonjs
+ℹ Building target module
+ℹ Cleaning up previous build at lib/module
+ℹ Compiling 12 files in src with babel
+✓ Wrote files to lib/module
+ℹ Building target typescript
+ℹ Cleaning up previous build at lib/typescript
+ℹ Generating type definitions with tsc
+src/__tests__/index.test.tsx:4:52 - error TS2307: Cannot find module '@react-navigation/native' or its corresponding type declarations.
+
+4 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+...
+```
+
+A known workaround to this is to install the dependencies in this order:
+
+1. `routers`
+2. `core`
+3. `native`
+4. `<package-you-are-editing>`, e.g. `compat`
+
+Then you can continue working as usual.
 
 <!-- badges -->
 
