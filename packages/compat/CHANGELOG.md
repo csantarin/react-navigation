@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.3.23 (2023-08-24)
+
+* relinquish generic types back to the consumers correctly ([csantarin/react-navigation#5](https://github.com/csantarin/react-navigation/pull/5))
+
 ## 5.3.22 (2023-08-24)
 
 * restore lost props.navigation functionality in withNavigationFocus HOC ([csantarin/react-navigation#3](https://github.com/csantarin/react-navigation/pull/3))
