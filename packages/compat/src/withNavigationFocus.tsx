@@ -1,8 +1,8 @@
 import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { NavigationProp, ParamListBase, useIsFocused } from '@react-navigation/native';
-import type { CompatNavigationProp } from './types';
 import useCompatNavigation from './useCompatNavigation';
+import type { CompatNavigationProp } from './types';
 
 type InjectedProps<T extends NavigationProp<ParamListBase>> = {
   isFocused: boolean;
