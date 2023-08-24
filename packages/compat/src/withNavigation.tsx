@@ -1,37 +1,40 @@
+/* eslint-disable prettier/prettier */
 import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import type { NavigationProp, ParamListBase } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
 import useCompatNavigation from './useCompatNavigation';
-import type { CompatNavigationProp } from './types';
+import type { NavigationParams, NavigationInjectedProps } from './types';
 
-type InjectedProps<T extends NavigationProp<ParamListBase>> = {
-  navigation: CompatNavigationProp<T>;
+const withNavigation = <
+  C extends React.ComponentType<{}>,
+  NP extends NavigationParams = NavigationParams
+>(
+  Component: C
+) => {
+  type WrappedP = React.ComponentProps<C> & NavigationInjectedProps<NP>;
+
+  const componentDisplayName = Component.displayName || Component.name;
+  const WrappedComponent = Component as unknown as React.ComponentType<WrappedP>;
+  const wrappedComponentDisplayName = `withNavigation(${componentDisplayName})`;
+
+  const NavigationComponent = React.forwardRef<C, WrappedP>((props, ref) => {
+    const navigation = useCompatNavigation<NavigationProp<NP>>();
+
+    return (
+    // @ts-expect-error: type checking HOC is hard
+      <WrappedComponent
+        {...props}
+        ref={ref}
+        navigation={navigation}
+      />
+    );
+  });
+
+  hoistNonReactStatics(NavigationComponent, Component);
+
+  NavigationComponent.displayName = wrappedComponentDisplayName;
+
+  return NavigationComponent;
 };
 
-export default function withNavigation<
-  T extends NavigationProp<ParamListBase>,
-  P extends InjectedProps<T>,
-  C extends React.ComponentType<P>
->(Comp: C) {
-  const WrappedComponent = ({
-    onRef,
-    ...rest
-  }: Exclude<P, InjectedProps<T>> & {
-    onRef?: C extends React.ComponentClass<any>
-      ? React.Ref<InstanceType<C>>
-      : never;
-  }): React.ReactElement => {
-    const navigation = useCompatNavigation<T>();
-
-    // @ts-expect-error: type checking HOC is hard
-    return <Comp ref={onRef} navigation={navigation} {...rest} />;
-  };
-
-  WrappedComponent.displayName = `withNavigation(${
-    Comp.displayName || Comp.name
-  })`;
-
-  hoistNonReactStatics(WrappedComponent, Comp);
-
-  return WrappedComponent;
-}
+export default withNavigation;

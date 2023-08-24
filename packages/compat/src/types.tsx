@@ -90,3 +90,18 @@ export type CompatRouteConfig<
         params?: ParamList[RouteName];
       });
 };
+
+export type NavigationParams = {
+  [key: string]: any;
+};
+
+export type NavigationInjectedProps<NP = NavigationParams> = {
+  navigation: CompatNavigationProp<
+    NavigationProp<{ [key: string]: NP } & ParamListBase>
+  >;
+};
+
+// eslint-disable-next-line prettier/prettier
+export type NavigationFocusInjectedProps<NP = NavigationParams> = NavigationInjectedProps<NP> & {
+  isFocused: boolean;
+};

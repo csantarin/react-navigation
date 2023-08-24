@@ -1,39 +1,44 @@
+/* eslint-disable prettier/prettier */
 import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import { NavigationProp, ParamListBase, useIsFocused } from '@react-navigation/native';
+import { NavigationProp, useIsFocused } from '@react-navigation/native';
 import useCompatNavigation from './useCompatNavigation';
-import type { CompatNavigationProp } from './types';
+import type { NavigationParams, NavigationFocusInjectedProps } from './types';
 
-type InjectedProps<T extends NavigationProp<ParamListBase>> = {
-  isFocused: boolean;
-  navigation: CompatNavigationProp<T>;
+const withNavigation = <
+  C extends React.ComponentType<{}>,
+  NP extends NavigationParams = NavigationParams
+>(
+  Component: C
+) => {
+  type WrappedP = React.ComponentProps<C> & NavigationFocusInjectedProps;
+
+  const componentDisplayName = Component.displayName || Component.name;
+  const WrappedComponent = Component as unknown as React.ComponentType<WrappedP>;
+  const wrappedComponentDisplayName = `withNavigation(${componentDisplayName})`;
+
+  const NavigationComponent = React.forwardRef<C, WrappedP>((props, ref) => {
+    const isFocused = useIsFocused();
+    const navigation = useCompatNavigation<NavigationProp<NP>>();
+
+    return (
+    // @ts-expect-error: type checking HOC is hard
+      <WrappedComponent
+        {...props}
+        ref={ref}
+        isFocused={isFocused}
+        navigation={navigation}
+      />
+    );
+  });
+
+  hoistNonReactStatics(NavigationComponent, Component);
+
+  NavigationComponent.displayName = wrappedComponentDisplayName;
+
+  return NavigationComponent;
 };
 
-export default function withNavigationFocus<
-  T extends NavigationProp<ParamListBase>,
-  P extends InjectedProps<T>,
-  C extends React.ComponentType<P>
->(Comp: C) {
-  const WrappedComponent = ({
-    onRef,
-    ...rest
-  }: Exclude<P, InjectedProps<T>> & {
-    onRef?: C extends React.ComponentClass<any>
-      ? React.Ref<InstanceType<C>>
-      : never;
-  }): React.ReactElement => {
-    const isFocused = useIsFocused();
-    const navigation = useCompatNavigation<T>();
+export default withNavigation;
 
-    // @ts-expect-error: type checking HOC is hard
-    return <Comp ref={onRef} isFocused={isFocused} navigation={navigation} {...rest} />;
-  };
 
-  WrappedComponent.displayName = `withNavigationFocus(${
-    Comp.displayName || Comp.name
-  })`;
-
-  hoistNonReactStatics(WrappedComponent, Comp);
-
-  return WrappedComponent;
-}
