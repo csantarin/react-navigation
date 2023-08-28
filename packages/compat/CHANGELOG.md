@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.3.24 (2023-08-28)
+
+* improve generic types of withNavigation HOCs ([csantarin/react-navigation#6](https://github.com/csantarin/react-navigation/pull/6))
+* restore backwards compatibility to withNavigation HOCs ([csantarin/react-navigation#5](https://github.com/csantarin/react-navigation/pull/5))
+
 ## 5.3.23 (2023-08-24)
 
 * relinquish generic types back to the consumers correctly ([csantarin/react-navigation#4](https://github.com/csantarin/react-navigation/pull/4))
