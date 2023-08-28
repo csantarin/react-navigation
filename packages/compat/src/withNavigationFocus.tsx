@@ -54,7 +54,17 @@ const withNavigation = <
 
   NavigationComponent.displayName = wrappedComponentDisplayName;
 
-  return NavigationComponent;
+  // 1. Inject HOC-specific props.
+  // 2. Retain C-specific props.
+  // 3. Retain C-specific statics.
+  type NavigationComponentType =
+    C extends React.ForwardRefExoticComponent<{}>
+      ? React.ForwardRefExoticComponent<P & WrappedP> & Pick<C, keyof C> // React.forwardRef((props, ref) => <Element/>)
+      : C extends ((props: P) => React.ReactElement | undefined | null)
+        ? ((props: P & WrappedP) => ReturnType<C>) & Pick<C, keyof C> // (props) => <Element/>
+        : C & React.ComponentClass<P & WrappedP>; // class extends React.Component { render(): <Element/> }
+
+  return NavigationComponent as NavigationComponentType;
 };
 
 export default withNavigation;
