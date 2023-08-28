@@ -44,7 +44,9 @@ Then follow these steps to publish and install a forked package:
 1. Open a Terminal and `cd` to the location of the cloned repo
 1. Run `yarn` to install any dependencies (c.f. **Installing dependencies of any package** below for additional context)
 1. If you want to make any changes, make them and commit
+1. Submit your changes in a PR, then merge them.
 1. Now `cd` to the package directory that you want to use (e.g. `cd packages/stack` for `@react-navigation/stack`)
+1. Insert a new version entry to `CHANGELOG.md` and update `package.json` to that new version
 1. Run `gitpkg publish` to publish the package to your repo
 
 After publishing, you should see something like this:
