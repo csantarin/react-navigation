@@ -57,7 +57,7 @@ const withNavigation = <
   const WrappedComponent = Component as unknown as React.ComponentType<WrappedP>;
   const wrappedComponentDisplayName = `withNavigation(${componentDisplayName})`;
 
-  const NavigationComponent = (props: WrappedP) => {
+  const ComponentWithNavigation = (props: WrappedP) => {
     const navigation = useCompatNavigation<NavigationProp<NP>>();
 
     return (
@@ -73,9 +73,9 @@ const withNavigation = <
     );
   };
 
-  hoistNonReactStatics(NavigationComponent, Component);
+  hoistNonReactStatics(ComponentWithNavigation, Component);
 
-  NavigationComponent.displayName = wrappedComponentDisplayName;
+  ComponentWithNavigation.displayName = wrappedComponentDisplayName;
 
   // 1. Inject HOC-specific props.
   // 2. Retain C-specific props.
@@ -111,7 +111,7 @@ const withNavigation = <
     : C;
     //#endregion
 
-  return NavigationComponent as NavigationComponentType;
+  return ComponentWithNavigation as NavigationComponentType;
 };
 
 export default withNavigation;
