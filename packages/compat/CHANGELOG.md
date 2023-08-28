@@ -5,7 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## 5.3.23 (2023-08-24)
 
-* relinquish generic types back to the consumers correctly ([csantarin/react-navigation#5](https://github.com/csantarin/react-navigation/pull/5))
+* relinquish generic types back to the consumers correctly ([csantarin/react-navigation#4](https://github.com/csantarin/react-navigation/pull/4))
 
 ## 5.3.22 (2023-08-24)
 
