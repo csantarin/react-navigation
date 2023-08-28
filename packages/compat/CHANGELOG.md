@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.3.26 (2023-08-29)
+
+* use 4.x naming conventions internally [csantarin/react-navigation#7](https://github.com/csantarin/react-navigation/pull/7)
+
 ## 5.3.25 (2023-08-28)
 
 **Note:** Version bump only for package @react-navigation/compat
