@@ -1,47 +1,48 @@
-/* eslint-disable prettier/prettier */
 import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import type { NavigationProp } from '@react-navigation/native';
 import useCompatNavigation from './useCompatNavigation';
-import type { NavigationParams } from './types';
+import type { NavigationInjectedProps, NavigationParams } from './types';
 
+/**
+ * Injects the wrapped component with the `navigation` prop using the React Navigation 4.x API contract.
+ * @param Component The component to be wrapped.
+ * @returns The wrapped component with `navigation` prop passed to it.
+ */
 const withNavigation = <
-  C extends React.JSXElementConstructor<{}>,
+  C extends React.JSXElementConstructor<any>,
   NP extends NavigationParams = NavigationParams
 >(
   Component: C
 ) => {
-  type P = React.ComponentProps<C>;
-  type OnRef
+  type Props = React.ComponentProps<C>;
+  type OnRef =
     //#region OnRef exhaustive types...
     // class Screen extends React.Component {}
-    = C extends React.ComponentClass<{}>
+    C extends React.ComponentClass<any>
       ? React.LegacyRef<InstanceType<C>>
-
-    // const Screen = React.memo(React.forwardRef((props, ref) => <></>));
-    : C extends React.MemoExoticComponent<React.ForwardRefExoticComponent<{}>>
+      : // const Screen = React.memo(React.forwardRef((props, ref) => <></>));
+      C extends React.MemoExoticComponent<React.ForwardRefExoticComponent<any>>
       ? React.RefAttributes<React.ElementRef<C>>['ref']
-
-    // const Screen = React.memo((props) => <></>);
-    : C extends React.MemoExoticComponent<(props: {}) => React.ReactElement | null>
+      : // const Screen = React.memo((props) => <></>);
+      C extends React.MemoExoticComponent<
+          (props: any) => React.ReactElement | null
+        >
       ? never
-
-    // const Screen = React.forwardRef((props, ref) => <></>);
-    : C extends React.ForwardRefExoticComponent<{}>
+      : // const Screen = React.forwardRef((props, ref) => <></>);
+      C extends React.ForwardRefExoticComponent<any>
       ? React.RefAttributes<React.ElementRef<C>>['ref']
-
-    // const Screen = React.memo(((props, ref) => <></>) as React.FunctionComponent);
-    : C extends React.NamedExoticComponent<{}>
+      : // const Screen = React.memo(((props, ref) => <></>) as React.FunctionComponent);
+      C extends React.NamedExoticComponent<any>
       ? never
-
-    // const Screen = (props, ref) => <></>;
-    : C extends (props: {}) => React.ReactElement | null | undefined
+      : // const Screen = (props, ref) => <></>;
+      C extends (props: any) => React.ReactElement | null | undefined
       ? never
+      : // unknown
+        never;
+  //#endregion
 
-    // unknown
-    : never;
-    //#endregion
-  type WrappedP = P & {
+  type RefProps = {
     /**
      * **NOTE**: Overriden by `.onRef` prop. Do not use `.ref`.
      *           As per official React Navigation 5 API, use `.onRef` instead!
@@ -52,24 +53,26 @@ const withNavigation = <
      */
     onRef?: OnRef;
   };
+  type WrappedProps = Omit<Props, keyof NavigationInjectedProps> & RefProps;
+  type WrappedPInternal = WrappedProps & NavigationInjectedProps;
 
-  const componentDisplayName = (Component as React.ComponentType<WrappedP>).displayName || Component.name;
-  const WrappedComponent = Component as unknown as React.ComponentType<WrappedP>;
+  const componentDisplayName =
+    (Component as React.ComponentType<WrappedProps>).displayName ||
+    Component.name;
+  const WrappedComponent = (Component as unknown) as React.ComponentType<
+    WrappedPInternal
+  >;
   const wrappedComponentDisplayName = `withNavigation(${componentDisplayName})`;
 
-  const ComponentWithNavigation = (props: WrappedP) => {
+  const ComponentWithNavigation = (props: WrappedProps) => {
     const navigation = useCompatNavigation<NavigationProp<NP>>();
 
     return (
-    // @ts-expect-error: type checking HOC is hard
-    // if we hadn't override the built-in ref with our custom onRef (official API since v4!!!), this
-    // would've been fine without bypassing the type checking. unfortunately, v4 & v5/compat spec is
-    // like this, so, the bypass has to stay to ease the implementation...
-      <WrappedComponent
-        {...props}
-        ref={props.onRef}
-        navigation={navigation}
-      />
+      // @ts-expect-error: type checking HOC is hard
+      // if we hadn't override the built-in ref with our custom onRef (official API since v4!!!), this
+      // would've been fine without bypassing the type checking. unfortunately, v4 & v5/compat spec is
+      // like this, so, the bypass has to stay to maintain full backwards compatibility...
+      <WrappedComponent {...props} ref={props.onRef} navigation={navigation} />
     );
   };
 
@@ -81,35 +84,58 @@ const withNavigation = <
   // 2. Retain C-specific props.
   // 3. Retain C-specific statics.
   type WithStatics<T> = T & Pick<C, keyof C>;
-  type NavigationComponentType
+  type NavigationComponentType =
     //#region NavigationComponentType exhaustive types...
     // class Screen extends React.Component {}
-    = C extends React.ComponentClass<{}>
-      ? C & React.ComponentClass<WrappedP>
-
-    // const Screen = React.memo(React.forwardRef((props, ref) => <></>));
-    : C extends React.MemoExoticComponent<React.ForwardRefExoticComponent<{}>>
-      ? WithStatics<React.MemoExoticComponent<(props: WrappedP) => ReturnType<C>>>
-
-    // const Screen = React.memo((props) => <></>);
-    : C extends React.MemoExoticComponent<(props: {}) => React.ReactElement | null>
-      ? C
-
-    // const Screen = React.forwardRef((props, ref) => <></>);
-    : C extends React.ForwardRefExoticComponent<{}>
-      ? WithStatics<React.ForwardRefExoticComponent<WrappedP>>
-
-    // const Screen = React.memo(((props, ref) => <></>) as React.FunctionComponent);
-    : C extends React.NamedExoticComponent<{}>
-      ? C
-
-    // const Screen = (props, ref) => <></>;
-    : C extends (props: {}) => React.ReactElement | null | undefined
-      ? C
-
-    // unknown
-    : C;
-    //#endregion
+    C extends React.ComponentClass<any>
+      ? C &
+          React.ComponentClass<
+            Omit<Props, keyof NavigationInjectedProps> & RefProps
+          >
+      : // const Screen = React.memo(React.forwardRef((props, ref) => <></>));
+      C extends React.MemoExoticComponent<React.ForwardRefExoticComponent<any>>
+      ? WithStatics<
+          React.MemoExoticComponent<
+            (
+              props: Omit<Props, keyof NavigationInjectedProps> & RefProps
+            ) => ReturnType<C>
+          >
+        >
+      : // const Screen = React.memo((props) => <></>);
+      C extends React.MemoExoticComponent<
+          (props: any) => React.ReactElement | null
+        >
+      ? WithStatics<
+          React.MemoExoticComponent<
+            (
+              props: Omit<Props, keyof NavigationInjectedProps> & RefProps
+            ) => ReturnType<C>
+          >
+        >
+      : // const Screen = React.forwardRef((props, ref) => <></>);
+      C extends React.ForwardRefExoticComponent<any>
+      ? WithStatics<
+          React.ForwardRefExoticComponent<
+            Omit<Props, keyof NavigationInjectedProps> & RefProps
+          >
+        >
+      : // const Screen = React.memo(((props, ref) => <></>) as React.FunctionComponent);
+      C extends React.NamedExoticComponent<any>
+      ? WithStatics<
+          React.NamedExoticComponent<
+            (
+              props: Omit<Props, keyof NavigationInjectedProps> & RefProps
+            ) => ReturnType<C>
+          >
+        >
+      : // const Screen = (props, ref) => <></>;
+      C extends (props: any) => React.ReactElement | null | undefined
+      ? (
+          props: Omit<Props, keyof NavigationInjectedProps> & RefProps
+        ) => ReturnType<C>
+      : // unknown
+        C;
+  //#endregion
 
   return ComponentWithNavigation as NavigationComponentType;
 };

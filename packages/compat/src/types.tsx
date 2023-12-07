@@ -91,17 +91,27 @@ export type CompatRouteConfig<
       });
 };
 
-export type NavigationParams = {
+/**
+ * Backwards-compatible types for HOCs.
+ */
+export declare type NavigationParams = {
   [key: string]: any;
 };
 
-export type NavigationInjectedProps<NP = NavigationParams> = {
+/**
+ * Backwards-compatible types for components using the `withNavigation()` HOC.
+ */
+export declare type NavigationInjectedProps<NP = NavigationParams> = {
   navigation: CompatNavigationProp<
     NavigationProp<{ [key: string]: NP } & ParamListBase>
   >;
 };
 
-// eslint-disable-next-line prettier/prettier
-export type NavigationFocusInjectedProps<NP = NavigationParams> = NavigationInjectedProps<NP> & {
+/**
+ * Backwards-compatible types for components using the `withNavigationFocus()` HOC.
+ */
+export declare type NavigationFocusInjectedProps<
+  NP = NavigationParams
+> = NavigationInjectedProps<NP> & {
   isFocused: boolean;
 };
