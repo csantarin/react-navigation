@@ -13,6 +13,126 @@ import ScreenPropsContext from './ScreenPropsContext';
 import createCompatNavigationProp from './createCompatNavigationProp';
 import type { CompatScreenType, CompatRouteConfig } from './types';
 
+export function renderCompatNavigatorScreens<
+  CreatedTypedNavigator extends TypedNavigator<
+    ParamListBase,
+    NavigationState,
+    {},
+    any,
+    React.ComponentType<any>
+  >,
+  NavigationPropType extends NavigationProp<any, any, any, any, any>,
+  ParamList extends ParamListBase = NavigationPropType extends NavigationProp<
+    infer P,
+    any,
+    any,
+    any,
+    any
+  >
+    ? P
+    : ParamListBase,
+  ScreenOptions extends {} = NavigationPropType extends NavigationProp<
+    any,
+    any,
+    any,
+    infer O
+  >
+    ? O
+    : {}
+>(args: {
+  routeConfig: CompatRouteConfig<NavigationPropType>;
+  routeNames: string[];
+  navigatorApi: CreatedTypedNavigator;
+  navigatorProps: {
+    parentRouteParams?: Readonly<object | undefined>;
+    screenProps?: unknown;
+  };
+  navigatorConfig: {
+    defaultNavigationOptions?: ScreenOptions;
+  };
+}) {
+  const {
+    routeConfig,
+    routeNames,
+    navigatorProps,
+    navigatorConfig,
+    navigatorApi: Pair,
+  } = args;
+  const { parentRouteParams, screenProps } = navigatorProps;
+  const { defaultNavigationOptions } = navigatorConfig;
+
+  return routeNames.map((name) => {
+    let getScreenComponent: () => CompatScreenType<NavigationPropType>;
+
+    let initialParams;
+
+    const routeConfigItem = routeConfig[name];
+
+    if ('getScreen' in routeConfigItem) {
+      getScreenComponent = routeConfigItem.getScreen;
+      initialParams = routeConfigItem.params;
+    } else if ('screen' in routeConfigItem) {
+      getScreenComponent = () => routeConfigItem.screen;
+      initialParams = routeConfigItem.params;
+    } else {
+      getScreenComponent = () => routeConfigItem;
+    }
+
+    const screenOptions = ({
+      navigation,
+      route,
+    }: {
+      navigation: NavigationPropType;
+      route: RouteProp<ParamList, keyof ParamList> & {
+        state?: NavigationState | PartialState<NavigationState>;
+      };
+    }) => {
+      const routeNavigationOptions =
+        'navigationOptions' in routeConfigItem
+          ? routeConfigItem.navigationOptions
+          : undefined;
+      const screenNavigationOptions = getScreenComponent().navigationOptions;
+
+      if (routeNavigationOptions == null && screenNavigationOptions == null) {
+        return undefined;
+      }
+
+      const options =
+        typeof routeNavigationOptions === 'function' ||
+        typeof screenNavigationOptions === 'function'
+          ? {
+              navigation: createCompatNavigationProp<
+                NavigationPropType,
+                ParamList
+              >(navigation, route, {}),
+              navigationOptions: defaultNavigationOptions || {},
+              screenProps,
+            }
+          : {};
+
+      return {
+        ...(typeof routeNavigationOptions === 'function'
+          ? (routeNavigationOptions as (o: any) => ScreenOptions)(options)
+          : routeNavigationOptions),
+        ...(typeof screenNavigationOptions === 'function'
+          ? (screenNavigationOptions as (o: any) => ScreenOptions)(options)
+          : screenNavigationOptions),
+      } as ScreenOptions;
+    };
+
+    return (
+      <Pair.Screen
+        key={name}
+        name={name}
+        initialParams={{ ...parentRouteParams, ...initialParams }}
+        options={screenOptions}
+      >
+        {() => <CompatScreen getComponent={getScreenComponent} />}
+      </Pair.Screen>
+    );
+  });
+}
+
 export default function createCompatNavigatorFactory<
   CreateNavigator extends () => TypedNavigator<
     ParamListBase,
