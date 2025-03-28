@@ -5,7 +5,7 @@ import * as SwitchActions from './SwitchActions';
 
 export { NavigationActions, StackActions, DrawerActions, SwitchActions };
 
-export { default as createCompatNavigatorFactory } from './createCompatNavigatorFactory';
+export { default as createCompatNavigatorFactory, renderCompatNavigatorScreens } from './createCompatNavigatorFactory';
 
 export { default as createCompatNavigationProp } from './createCompatNavigationProp';
 
