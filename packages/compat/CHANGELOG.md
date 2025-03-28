@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.3.27 (2025-03-29)
+
+* refactor renderCompatNavigatorScreens
+
+## 5.3.27 (2025-03-29)
+
+* expose createCompatNavigatorFactory screen array render method 
+
 ## 5.3.26 (2023-08-29)
 
 * use 4.x naming conventions internally [csantarin/react-navigation#7](https://github.com/csantarin/react-navigation/pull/7)
