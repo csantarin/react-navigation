@@ -5,6 +5,8 @@ import * as SwitchActions from './SwitchActions';
 
 export { NavigationActions, StackActions, DrawerActions, SwitchActions };
 
+export { default as CompatScreen } from './CompatScreen';
+
 export {
   default as createCompatNavigatorFactory,
   renderCompatNavigatorScreens,
