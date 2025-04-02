@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.3.30 (2025-04-02)
+
+* expose useCompatNavigatorScreens
+
 ## 5.3.29 (2025-03-29)
 
 * expose renderCompatNavigatorScreens
