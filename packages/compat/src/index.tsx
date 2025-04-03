@@ -10,7 +10,6 @@ export { default as CompatScreen } from './CompatScreen';
 export {
   default as createCompatNavigatorFactory,
   renderCompatNavigatorScreens,
-  useCompatNavigatorScreens,
 } from './createCompatNavigatorFactory';
 
 export { default as createCompatNavigationProp } from './createCompatNavigationProp';

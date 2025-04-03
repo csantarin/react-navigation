@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.3.32 (2025-04-03)
+
+* remove useCompatNavigatorScreens
+* undo exposure of CompatScreen
+* 
+
 ## 5.3.31 (2025-04-02)
 
 * expose CompatScreen
