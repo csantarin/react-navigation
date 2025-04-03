@@ -7,7 +7,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * remove useCompatNavigatorScreens
 * undo exposure of CompatScreen
-* 
+* prevent renderCompatNavigatorScreens rerendering unnecessarily
 
 ## 5.3.31 (2025-04-02)
 

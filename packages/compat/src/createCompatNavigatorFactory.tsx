@@ -224,7 +224,6 @@ export function renderCompatNavigatorScreens<
   routeNames: string[];
   navigatorApi: CreatedTypedNavigator;
   navigatorProps: {
-    parentRouteParams?: Readonly<object | undefined>;
     screenProps?: unknown;
   };
   navigatorConfig: {
@@ -238,10 +237,11 @@ export function renderCompatNavigatorScreens<
     navigatorConfig,
     navigatorApi: Pair,
   } = args;
-  const { parentRouteParams, screenProps } = navigatorProps;
+  const { screenProps } = navigatorProps;
   const { defaultNavigationOptions } = navigatorConfig;
 
   return routeNames.map((name) => {
+    const parentRouteParams = React.useContext(NavigationRouteContext)?.params;
     let getScreenComponent: () => CompatScreenType<NavigationPropType>;
 
     let initialParams;
